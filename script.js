@@ -11,70 +11,172 @@ const passwordError = document.getElementById("passwordError");
 
 const successMessage = document.getElementById("successMessage");
 
+// Theme toggle elements
+const themeToggleBtn = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+
 // === Validation Functions ===
 function validateName() {
-    if (nameInput.value.trim() === "") {
-        nameError.textContent = "Name cannot be empty";
-        return false;
-    }
-    nameError.textContent = "";
-    return true;
+  if (nameInput.value.trim() === "") {
+    nameError.textContent = "Name cannot be empty";
+    return false;
+  }
+  nameError.textContent = "";
+  return true;
 }
 
 function validateEmail() {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailInput.value.match(emailPattern)) {
-        emailError.textContent = "Enter a valid email address";
-        return false;
-    }
+  if (!emailInput.value.match(emailPattern)) {
+    emailError.textContent = "Enter a valid email address";
+    return false;
+  }
 
-    emailError.textContent = "";
-    return true;
+  emailError.textContent = "";
+  return true;
 }
 
 function validatePassword() {
-    const password = passwordInput.value;
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
+  const password = passwordInput.value;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
 
-    if (password === "") {
-        passwordError.textContent = "Password cannot be empty";
-        return false;
-    }
-    if (!hasUppercase) {
-        passwordError.textContent = "Must contain an uppercase letter";
-        return false;
-    }
-    if (!hasNumber) {
-        passwordError.textContent = "Must contain a number";
-        return false;
-    }
+  if (password === "") {
+    passwordError.textContent = "Password cannot be empty";
+    return false;
+  }
+  if (!hasUppercase) {
+    passwordError.textContent = "Must contain an uppercase letter";
+    return false;
+  }
+  if (!hasNumber) {
+    passwordError.textContent = "Must contain a number";
+    return false;
+  }
 
-    passwordError.textContent = "";
-    return true;
+  passwordError.textContent = "";
+  return true;
 }
 
 // === Event Handling (At least two event types used) ===
-nameInput.addEventListener("input", validateName); // real-time feedback
-emailInput.addEventListener("blur", validateEmail); // on losing focus
+nameInput.addEventListener("input", validateName);        // real-time feedback
+emailInput.addEventListener("blur", validateEmail);       // on losing focus
 passwordInput.addEventListener("input", validatePassword);
 
 // === Form Submission ===
 form.addEventListener("submit", function (event) {
-    event.preventDefault(); // prevent refresh
+  event.preventDefault(); // prevent refresh
 
-    const isNameValid = validateName();
-    const isEmailValid = validateEmail();
-    const isPasswordValid = validatePassword();
+  const isNameValid = validateName();
+  const isEmailValid = validateEmail();
+  const isPasswordValid = validatePassword();
 
-    if (isNameValid && isEmailValid && isPasswordValid) {
-        form.style.display = "none";
-        successMessage.classList.remove("hidden");
-        console.log("User Data:", {
-            name: nameInput.value,
-            email: emailInput.value,
-            password: passwordInput.value,
-        });
-    }
+  if (isNameValid && isEmailValid && isPasswordValid) {
+    form.style.display = "none";
+    successMessage.classList.remove("hidden");
+    // Collected user data (demo)
+    console.log("User Data:", {
+      name: nameInput.value,
+      email: emailInput.value,
+      password: passwordInput.value,
+    });
+  }
 });
+
+/* === Theme Toggle Logic === */
+
+// Apply theme from localStorage or system if none stored
+function applyTheme(theme) {
+  if (theme === "dark") {
+    document.body.classList.add("dark");
+    themeToggleBtn.setAttribute("aria-pressed", "true");
+    themeIcon.textContent = "☀️";
+  } else {
+    document.body.classList.remove("dark");
+    themeToggleBtn.setAttribute("aria-pressed", "false");
+    themeIcon.textContent = "🌙";
+  }
+}
+
+// Load saved preference or default to light
+const savedTheme = localStorage.getItem("site-theme");
+if (savedTheme) {
+  applyTheme(savedTheme);
+} else {
+  // optional: detect system preference
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(prefersDark ? "dark" : "light");
+}
+
+// Toggle handler (click)
+themeToggleBtn.addEventListener("click", function () {
+  const isDark = document.body.classList.contains("dark");
+  const newTheme = isDark ? "light" : "dark";
+  applyTheme(newTheme);
+  localStorage.setItem("site-theme", newTheme);
+});
+
+// Keyboard accessibility (keydown: Enter or Space)
+themeToggleBtn.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    themeToggleBtn.click();
+  }
+});
+// Show error with animation
+function showError(inputElement, errorElement, message) {
+  errorElement.textContent = message;
+  errorElement.classList.add("show");
+  setTimeout(() => {
+    errorElement.classList.remove("show");
+  }, 300); // Remove shake after animation
+}
+
+// Updated validation functions
+function validateName() {
+  if (nameInput.value.trim() === "") {
+    showError(nameInput, nameError, "Name cannot be empty");
+    return false;
+  }
+  nameError.textContent = "";
+  return true;
+}
+
+function validateEmail() {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailInput.value.match(emailPattern)) {
+    showError(emailInput, emailError, "Enter a valid email address");
+    return false;
+  }
+  emailError.textContent = "";
+  return true;
+}
+
+function validatePassword() {
+  const password = passwordInput.value;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+
+  if (password === "") {
+    showError(passwordInput, passwordError, "Password cannot be empty");
+    return false;
+  }
+  if (!hasUppercase) {
+    showError(passwordInput, passwordError, "Must contain an uppercase letter");
+    return false;
+  }
+  if (!hasNumber) {
+    showError(passwordInput, passwordError, "Must contain a number");
+    return false;
+  }
+
+  passwordError.textContent = "";
+  return true;
+}
+
+// Show success message with animation
+if (isNameValid && isEmailValid && isPasswordValid) {
+  form.style.display = "none";
+  successMessage.classList.add("show");
+}
