@@ -22,21 +22,24 @@
       <!-- Name Field -->
       <div class="input-group">
         <label for="name">Name</label>
-        <input type="text" id="name" autocomplete="name" />
+        <input type="text" id="name" autocomplete="name" placeholder="Enter your full name" />
         <small class="error" id="nameError"></small>
       </div>
 
       <!-- Email Field -->
       <div class="input-group">
         <label for="email">Email</label>
-        <input type="email" id="email" autocomplete="email" />
+        <input type="email" id="email" autocomplete="email" placeholder="Enter your email address" />
         <small class="error" id="emailError"></small>
       </div>
 
       <!-- Password Field -->
       <div class="input-group">
         <label for="password">Password</label>
-        <input type="password" id="password" autocomplete="new-password" />
+        <div class="password-container">
+          <input type="password" id="password" autocomplete="new-password" placeholder="Enter a strong password" />
+          <span class="password-toggle" id="passwordToggle">👁️</span>
+        </div>
         <small class="error" id="passwordError"></small>
       </div>
 

@@ -15,6 +15,9 @@ const successMessage = document.getElementById("successMessage");
 const themeToggleBtn = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 
+// Password toggle elements
+const passwordToggle = document.getElementById("passwordToggle");
+
 // === Validation Functions ===
 function validateName() {
   if (nameInput.value.trim() === "") {
@@ -64,6 +67,15 @@ nameInput.addEventListener("input", validateName);        // real-time feedback
 emailInput.addEventListener("blur", validateEmail);       // on losing focus
 passwordInput.addEventListener("input", validatePassword);
 
+// Password reveal toggle (hover to show)
+passwordToggle.addEventListener("mouseenter", function() {
+  passwordInput.type = "text";
+});
+
+passwordToggle.addEventListener("mouseleave", function() {
+  passwordInput.type = "password";
+});
+
 // === Form Submission ===
 form.addEventListener("submit", function (event) {
   event.preventDefault(); // prevent refresh
@@ -74,7 +86,9 @@ form.addEventListener("submit", function (event) {
 
   if (isNameValid && isEmailValid && isPasswordValid) {
     form.style.display = "none";
+    // show success with animation: remove hidden and add show class
     successMessage.classList.remove("hidden");
+    successMessage.classList.add("show");
     // Collected user data (demo)
     console.log("User Data:", {
       name: nameInput.value,
@@ -175,8 +189,6 @@ function validatePassword() {
   return true;
 }
 
-// Show success message with animation
-if (isNameValid && isEmailValid && isPasswordValid) {
-  form.style.display = "none";
-  successMessage.classList.add("show");
-}
+// NOTE: removed stray global check (it caused ReferenceError because
+// isNameValid/isEmailValid/isPasswordValid were local to the submit handler).
+// Success message is now handled inside the submit listener above.
