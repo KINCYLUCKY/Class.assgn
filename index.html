@@ -51,15 +51,26 @@
       <P>
         forgot your password? <a href="reset-password.html">Click here to reset it</a>
       </P>
-      <form action="/update-password"method="POST">
-        
-        <input type="hidden"name="token"value="abc123Xyz" />
-        <label for="new-password">New Password:</label>
-        <input type="password" id="new-password" name="new-password" required />
-        <button type="submit">Update Password</button>
-        <label for="confirm-password">confirm password:</label>
-        <input type="password" id="confirm-password" name="confirm-password" required />
-        <button type="submit">Reset Password</button>
+      <div id="reset-form" style="display:none;">
+  <form action="/update-password" method="POST">
+    <input type="hidden" name="token" value="{{token}}">
+    <label for="new-password">New Password:</label>
+    <input type="password" id="new-password" name="newPassword" required>
+    <label for="confirm-password">Confirm Password:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required>
+    <button type="submit">Reset Password</button>
+  </form>
+</div>
+<script>
+  // This JS makes the hidden form visible
+  document.getElementById('show-reset').addEventListener('click', function(e) {
+    e.preventDefault();  // prevent link from reloading page
+    document.getElementById('reset-form').style.display = 'block';
+  });
+</script>
+
+
+      
       </form>
 
     <div id="successMessage" class="hidden">
