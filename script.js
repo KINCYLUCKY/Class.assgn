@@ -98,6 +98,50 @@ form.addEventListener("submit", function (event) {
   }
 });
 
+/* === Character Animations === */
+const character = document.getElementById('character');
+const blinkOverlay = document.getElementById('blinkOverlay');
+
+const svgMaps = {
+  idle: '<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="25" r="15" fill="#FFE0B5" stroke="#666" stroke-width="1.5"/><path d="M35 12 Q50 5 65 12 L65 15 Q50 18 35 15 Z" fill="#4A4A4A"/><circle cx="45" cy="22" r="1.5" fill="#333"/><circle cx="55" cy="22" r="1.5" fill="#333"/><path d="M48 26 Q50 28 52 26" stroke="#333" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="40" y="40" width="20" height="50" rx="5" fill="#4A90E2" stroke="#666" stroke-width="1"/><ellipse cx="32" cy="50" rx="5" ry="20" fill="#FFE0B5"/><ellipse cx="68" cy="50" rx="5" ry="20" fill="#FFE0B5"/><rect x="42" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="52" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="40" y="145" width="10" height="5" rx="2" fill="#333"/><rect x="50" y="145" width="10" height="5" rx="2" fill="#333"/></svg>',
+  reading: '<svg width="100" height="150" viewBox="0 0 100 150" transform="rotate(-10 50 75)" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="25" r="15" fill="#FFE0B5" stroke="#666" stroke-width="1.5"/><path d="M35 12 Q50 5 65 12 L65 15 Q50 18 35 15 Z" fill="#4A4A4A"/><circle cx="45" cy="22" r="1.5" fill="#333"/><circle cx="55" cy="22" r="1.5" fill="#333"/><path d="M48 26 Q50 28 52 26" stroke="#333" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="40" y="40" width="20" height="50" rx="5" fill="#4A90E2" stroke="#666" stroke-width="1"/><ellipse cx="32" cy="50" rx="5" ry="20" fill="#FFE0B5"/><ellipse cx="68" cy="50" rx="5" ry="20" fill="#FFE0B5"/><rect x="42" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="52" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="40" y="145" width="10" height="5" rx="2" fill="#333"/><rect x="50" y="145" width="10" height="5" rx="2" fill="#333"/></svg>',
+  'with-glasses': '<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="25" r="15" fill="#FFE0B5" stroke="#666" stroke-width="1.5"/><path d="M35 12 Q50 5 65 12 L65 15 Q50 18 35 15 Z" fill="#4A4A4A"/><circle cx="45" cy="22" r="3" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="55" cy="22" r="3" fill="none" stroke="#333" stroke-width="1.5"/><path d="M48 22 L52 22" stroke="#333" stroke-width="1.5"/><circle cx="45" cy="22" r="1.5" fill="#333"/><circle cx="55" cy="22" r="1.5" fill="#333"/><path d="M48 26 Q50 28 52 26" stroke="#333" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="40" y="40" width="20" height="50" rx="5" fill="#4A90E2" stroke="#666" stroke-width="1"/><ellipse cx="32" cy="50" rx="5" ry="20" fill="#FFE0B5"/><ellipse cx="68" cy="50" rx="5" ry="20" fill="#FFE0B5"/><rect x="42" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="52" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="40" y="145" width="10" height="5" rx="2" fill="#333"/><rect x="50" y="145" width="10" height="5" rx="2" fill="#333"/></svg>',
+  covering: '<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="25" r="15" fill="#FFE0B5" stroke="#666" stroke-width="1.5"/><path d="M35 12 Q50 5 65 12 L65 15 Q50 18 35 15 Z" fill="#4A4A4A"/><circle cx="45" cy="22" r="1.5" fill="#333"/><circle cx="55" cy="22" r="1.5" fill="#333"/><path d="M48 26 Q50 28 52 26" stroke="#333" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="40" y="40" width="20" height="50" rx="5" fill="#4A90E2" stroke="#666" stroke-width="1"/><ellipse cx="42" cy="35" rx="5" ry="15" fill="#FFE0B5"/><ellipse cx="58" cy="35" rx="5" ry="15" fill="#FFE0B5"/><rect x="42" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="52" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="40" y="145" width="10" height="5" rx="2" fill="#333"/><rect x="50" y="145" width="10" height="5" rx="2" fill="#333"/></svg>'
+};
+
+const blinkLayerSvg = '<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="25" rx="15" ry="17" fill="#FFE0B5" opacity="0.8"/><path d="M40 23 Q50 21 60 23" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';
+
+function setReaction(reactionClass) {
+  character.classList.remove('reading', 'with-glasses', 'covering', 'idle');
+  character.classList.add(reactionClass || 'idle');
+  character.innerHTML = svgMaps[reactionClass] || svgMaps.idle;
+}
+
+function updateReaction() {
+  const focused = document.activeElement;
+  if (focused === nameInput) setReaction('reading');
+  else if (focused === emailInput) setReaction('with-glasses');
+  else if (focused === passwordInput) setReaction('covering');
+  else setReaction('idle');
+}
+
+[nameInput, emailInput, passwordInput].forEach(input => {
+  input.addEventListener('focus', updateReaction);
+  input.addEventListener('blur', () => setTimeout(updateReaction, 0));
+});
+
+// Initial idle
+setReaction('idle');
+
+// Blinking every 3-6 seconds
+setInterval(() => {
+  if (character.classList.contains('idle')) {
+    blinkOverlay.innerHTML = blinkLayerSvg;
+    blinkOverlay.style.display = 'block';
+    setTimeout(() => blinkOverlay.style.display = 'none', 120);
+  }
+}, 3000 + Math.random() * 3000);
+
 /* === Theme Toggle Logic === */
 
 // Apply theme from localStorage or system if none stored
@@ -169,8 +213,11 @@ function validateEmail() {
 
 function validatePassword() {
   const password = passwordInput.value;
+  const minLength = 12;
   const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
   if (password === "") {
     showError(passwordInput, passwordError, "Password cannot be empty");
