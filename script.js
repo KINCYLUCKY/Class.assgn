@@ -16,7 +16,20 @@ const themeToggleBtn = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 
 // Password toggle elements
-const passwordToggle = document.getElementById("passwordToggle");
+const passwordToggleBtn = document.getElementById("passwordToggle");
+
+// Password checklist elements
+const checklistItems = {
+  length: document.getElementById("check-length"),
+  uppercase: document.getElementById("check-uppercase"),
+  lowercase: document.getElementById("check-lowercase"),
+  number: document.getElementById("check-number"),
+  special: document.getElementById("check-special")
+};
+
+// Password validation regex (strict policy)
+// Requires: 12+ chars, lowercase, uppercase, digit, and special char
+const passwordRegex = /^(?=.{12,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).*$/;
 
 // === Validation Functions ===
 function validateName() {
@@ -40,21 +53,65 @@ function validateEmail() {
   return true;
 }
 
+// Check individual password criteria
+function checkPasswordCriteria(password) {
+  return {
+    length: password.length >= 12,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /\d/.test(password),
+    special: /[!@#$%^&()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+  };
+}
+
+// Update the checklist display in real-time
+function updateChecklist(password) {
+  const criteria = checkPasswordCriteria(password);
+
+  // Update each checklist item
+  const items = [
+    { key: 'length', element: checklistItems.length },
+    { key: 'uppercase', element: checklistItems.uppercase },
+    { key: 'lowercase', element: checklistItems.lowercase },
+    { key: 'number', element: checklistItems.number },
+    { key: 'special', element: checklistItems.special }
+  ];
+
+  items.forEach(item => {
+    if (criteria[item.key]) {
+      item.element.classList.add('valid');
+      item.element.querySelector('.check-icon').textContent = '✓';
+    } else {
+      item.element.classList.remove('valid');
+      item.element.querySelector('.check-icon').textContent = '✗';
+    }
+  });
+
+  return criteria;
+}
+
+// Validate password against strict policy
 function validatePassword() {
   const password = passwordInput.value;
-  const hasUppercase = /[A-Z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
+  const criteria = updateChecklist(password);
 
-  if (password === "") {
-    passwordError.textContent = "Password cannot be empty";
-    return false;
-  }
-  if (!hasUppercase) {
-    passwordError.textContent = "Must contain an uppercase letter";
-    return false;
-  }
-  if (!hasNumber) {
-    passwordError.textContent = "Must contain a number";
+  // Check if password matches full regex pattern
+  if (!password.match(passwordRegex)) {
+    if (password === "") {
+      passwordError.textContent = "Password is required";
+    } else {
+      // Show which specific requirements are missing
+      const missing = [];
+      if (!criteria.length) missing.push("12+ characters");
+      if (!criteria.uppercase) missing.push("uppercase letter");
+      if (!criteria.lowercase) missing.push("lowercase letter");
+      if (!criteria.number) missing.push("number");
+      if (!criteria.special) missing.push("special character");
+      
+      passwordError.textContent = missing.length > 0 
+        ? `Missing: ${missing.join(", ")}`
+        : "Password does not meet requirements";
+    }
     return false;
   }
 
@@ -62,18 +119,23 @@ function validatePassword() {
   return true;
 }
 
-// === Event Handling (At least two event types used) ===
+// === Event Handling ===
 nameInput.addEventListener("input", validateName);        // real-time feedback
 emailInput.addEventListener("blur", validateEmail);       // on losing focus
-passwordInput.addEventListener("input", validatePassword);
+passwordInput.addEventListener("input", validatePassword); // real-time password validation
 
-// Password reveal toggle (hover to show)
-passwordToggle.addEventListener("mouseenter", function() {
-  passwordInput.type = "text";
-});
-
-passwordToggle.addEventListener("mouseleave", function() {
-  passwordInput.type = "password";
+// Password toggle button (click to toggle visibility)
+passwordToggleBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  const isPassword = passwordInput.type === "password";
+  passwordInput.type = isPassword ? "text" : "password";
+  
+  // Update icon
+  const icon = passwordToggleBtn.querySelector('.toggle-icon');
+  icon.textContent = isPassword ? "🙈" : "👁️";
+  
+  // Update aria-pressed
+  passwordToggleBtn.setAttribute("aria-pressed", isPassword);
 });
 
 // === Form Submission ===
@@ -97,50 +159,6 @@ form.addEventListener("submit", function (event) {
     });
   }
 });
-
-/* === Character Animations === */
-const character = document.getElementById('character');
-const blinkOverlay = document.getElementById('blinkOverlay');
-
-const svgMaps = {
-  idle: '<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="25" r="15" fill="#FFE0B5" stroke="#666" stroke-width="1.5"/><path d="M35 12 Q50 5 65 12 L65 15 Q50 18 35 15 Z" fill="#4A4A4A"/><circle cx="45" cy="22" r="1.5" fill="#333"/><circle cx="55" cy="22" r="1.5" fill="#333"/><path d="M48 26 Q50 28 52 26" stroke="#333" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="40" y="40" width="20" height="50" rx="5" fill="#4A90E2" stroke="#666" stroke-width="1"/><ellipse cx="32" cy="50" rx="5" ry="20" fill="#FFE0B5"/><ellipse cx="68" cy="50" rx="5" ry="20" fill="#FFE0B5"/><rect x="42" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="52" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="40" y="145" width="10" height="5" rx="2" fill="#333"/><rect x="50" y="145" width="10" height="5" rx="2" fill="#333"/></svg>',
-  reading: '<svg width="100" height="150" viewBox="0 0 100 150" transform="rotate(-10 50 75)" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="25" r="15" fill="#FFE0B5" stroke="#666" stroke-width="1.5"/><path d="M35 12 Q50 5 65 12 L65 15 Q50 18 35 15 Z" fill="#4A4A4A"/><circle cx="45" cy="22" r="1.5" fill="#333"/><circle cx="55" cy="22" r="1.5" fill="#333"/><path d="M48 26 Q50 28 52 26" stroke="#333" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="40" y="40" width="20" height="50" rx="5" fill="#4A90E2" stroke="#666" stroke-width="1"/><ellipse cx="32" cy="50" rx="5" ry="20" fill="#FFE0B5"/><ellipse cx="68" cy="50" rx="5" ry="20" fill="#FFE0B5"/><rect x="42" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="52" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="40" y="145" width="10" height="5" rx="2" fill="#333"/><rect x="50" y="145" width="10" height="5" rx="2" fill="#333"/></svg>',
-  'with-glasses': '<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="25" r="15" fill="#FFE0B5" stroke="#666" stroke-width="1.5"/><path d="M35 12 Q50 5 65 12 L65 15 Q50 18 35 15 Z" fill="#4A4A4A"/><circle cx="45" cy="22" r="3" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="55" cy="22" r="3" fill="none" stroke="#333" stroke-width="1.5"/><path d="M48 22 L52 22" stroke="#333" stroke-width="1.5"/><circle cx="45" cy="22" r="1.5" fill="#333"/><circle cx="55" cy="22" r="1.5" fill="#333"/><path d="M48 26 Q50 28 52 26" stroke="#333" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="40" y="40" width="20" height="50" rx="5" fill="#4A90E2" stroke="#666" stroke-width="1"/><ellipse cx="32" cy="50" rx="5" ry="20" fill="#FFE0B5"/><ellipse cx="68" cy="50" rx="5" ry="20" fill="#FFE0B5"/><rect x="42" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="52" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="40" y="145" width="10" height="5" rx="2" fill="#333"/><rect x="50" y="145" width="10" height="5" rx="2" fill="#333"/></svg>',
-  covering: '<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="25" r="15" fill="#FFE0B5" stroke="#666" stroke-width="1.5"/><path d="M35 12 Q50 5 65 12 L65 15 Q50 18 35 15 Z" fill="#4A4A4A"/><circle cx="45" cy="22" r="1.5" fill="#333"/><circle cx="55" cy="22" r="1.5" fill="#333"/><path d="M48 26 Q50 28 52 26" stroke="#333" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="40" y="40" width="20" height="50" rx="5" fill="#4A90E2" stroke="#666" stroke-width="1"/><ellipse cx="42" cy="35" rx="5" ry="15" fill="#FFE0B5"/><ellipse cx="58" cy="35" rx="5" ry="15" fill="#FFE0B5"/><rect x="42" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="52" y="90" width="6" height="60" rx="3" fill="#333"/><rect x="40" y="145" width="10" height="5" rx="2" fill="#333"/><rect x="50" y="145" width="10" height="5" rx="2" fill="#333"/></svg>'
-};
-
-const blinkLayerSvg = '<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="25" rx="15" ry="17" fill="#FFE0B5" opacity="0.8"/><path d="M40 23 Q50 21 60 23" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';
-
-function setReaction(reactionClass) {
-  character.classList.remove('reading', 'with-glasses', 'covering', 'idle');
-  character.classList.add(reactionClass || 'idle');
-  character.innerHTML = svgMaps[reactionClass] || svgMaps.idle;
-}
-
-function updateReaction() {
-  const focused = document.activeElement;
-  if (focused === nameInput) setReaction('reading');
-  else if (focused === emailInput) setReaction('with-glasses');
-  else if (focused === passwordInput) setReaction('covering');
-  else setReaction('idle');
-}
-
-[nameInput, emailInput, passwordInput].forEach(input => {
-  input.addEventListener('focus', updateReaction);
-  input.addEventListener('blur', () => setTimeout(updateReaction, 0));
-});
-
-// Initial idle
-setReaction('idle');
-
-// Blinking every 3-6 seconds
-setInterval(() => {
-  if (character.classList.contains('idle')) {
-    blinkOverlay.innerHTML = blinkLayerSvg;
-    blinkOverlay.style.display = 'block';
-    setTimeout(() => blinkOverlay.style.display = 'none', 120);
-  }
-}, 3000 + Math.random() * 3000);
 
 /* === Theme Toggle Logic === */
 
@@ -213,11 +231,8 @@ function validateEmail() {
 
 function validatePassword() {
   const password = passwordInput.value;
-  const minLength = 12;
   const hasUppercase = /[A-Z]/.test(password);
-  const hasLowercase = /[a-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
   if (password === "") {
     showError(passwordInput, passwordError, "Password cannot be empty");

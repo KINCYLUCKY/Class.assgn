@@ -16,13 +16,9 @@
       </button>
     </div>
 
-    <div class="character" id="character"></div>
-    <div class="blink-overlay" id="blinkOverlay"></div>
+    <h2>Create an Account</h2>
 
-    <div class="form-section">
-      <h2>Create an Account</h2>
-
-      <form id="registrationForm" novalidate>
+    <form id="registrationForm" novalidate>
       <!-- Name Field -->
       <div class="input-group">
         <label for="name">Name</label>
@@ -42,16 +38,38 @@
         <label for="password">Password</label>
         <div class="password-container">
           <input type="password" id="password" autocomplete="new-password" placeholder="Enter a strong password" />
-          <span class="password-toggle" id="passwordToggle">👁️</span>
+          <button type="button" id="passwordToggle" class="password-toggle-btn" aria-label="Show/hide password" title="Toggle password visibility">
+            <span class="toggle-icon">👁️</span>
+          </button>
+        </div>
+        <small class="help-text">Password must meet all requirements:</small>
+        <div class="checklist" id="passwordChecklist">
+          <div class="checklist-item" id="check-length">
+            <span class="check-icon">✗</span>
+            <span class="check-label">At least 12 characters</span>
+          </div>
+          <div class="checklist-item" id="check-uppercase">
+            <span class="check-icon">✗</span>
+            <span class="check-label">At least one uppercase letter (A–Z)</span>
+          </div>
+          <div class="checklist-item" id="check-lowercase">
+            <span class="check-icon">✗</span>
+            <span class="check-label">At least one lowercase letter (a–z)</span>
+          </div>
+          <div class="checklist-item" id="check-number">
+            <span class="check-icon">✗</span>
+            <span class="check-label">At least one number (0–9)</span>
+          </div>
+          <div class="checklist-item" id="check-special">
+            <span class="check-icon">✗</span>
+            <span class="check-label">At least one special character (!@#$%^&*()_+-=[]{};':"\\|,.<>/?)</span>
+          </div>
         </div>
         <small class="error" id="passwordError"></small>
       </div>
 
       <button type="submit">Register</button>
-      
-
-      
-      </form>
+    </form>
 
     <div id="successMessage" class="hidden">
       <h3>Registration Successful!</h3>

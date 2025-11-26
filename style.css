@@ -29,16 +29,13 @@ body {
 .container {
   background: var(--card);
   width: 100%;
-  max-width: 600px;
+  max-width: 420px;
   padding: 40px;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .container::before {
@@ -145,28 +142,6 @@ h2 {
   }
 }
 
-/* Character Styles */
-.character {
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  width: 100px;
-  height: 150px;
-  z-index: -1;
-}
-
-.blink-overlay {
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  width: 100px;
-  height: 150px;
-  z-index: 0;
-  pointer-events: none;
-  display: none;
-  transition: opacity 0.1s ease;
-}
-
 /* Input Groups */
 .input-group {
   margin-bottom: 24px;
@@ -216,34 +191,47 @@ input {
 }
 
 .password-container input {
-  padding-right: 50px; /* Space for the toggle */
+  padding-right: 45px; /* Space for the toggle button inside */
 }
 
-.password-toggle {
+/* Password toggle button */
+.password-toggle-btn {
   position: absolute;
-  right: 16px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
+  background: transparent;
+  border: none;
   cursor: pointer;
   font-size: 18px;
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
-  user-select: none;
-  animation: pulse 1.5s ease-in-out infinite;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  height: 36px;
+  width: 36px;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
+.password-toggle-btn:hover {
+  background: rgba(102, 126, 234, 0.15);
 }
 
-.password-toggle:hover {
-  opacity: 1;
-  animation: none;
+.password-toggle-btn:focus {
+  outline: 2px solid var(--input-focus);
+  outline-offset: -2px;
+}
+
+.toggle-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  line-height: 1;
+}
+
+.password-toggle-btn:active .toggle-icon {
+  transform: scale(1.2);
 }
 
 input:hover {
@@ -273,6 +261,7 @@ input:focus {
 
 .error:not(:empty)::before {
   content: '⚠';
+  font-size: 14px;
 }
 
 /* Submit Button */
@@ -286,12 +275,12 @@ button[type="submit"] {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  alsition: relative;
+  transition: all 0.3s ease;
+  position: relative;
   overflow: hidden;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  animation: slideInUp 0.6s ease 0.4s both;;
-  animation: slideInUp 0.6s ease 0.4s both
+  animation: slideInUp 0.6s ease 0.4s both;
 }
 
 button[type="submit"]::before {
@@ -385,6 +374,72 @@ button[type="submit"]:active {
     opacity: 1;
     transform: scale(1) rotate(0deg);
   }
+}
+
+/* Help text */
+.help-text {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+  margin-bottom: 8px;
+  display: block;
+  font-weight: 500;
+}
+
+/* Password checklist */
+.checklist {
+  background: rgba(102, 126, 234, 0.05);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 12px;
+  margin: 8px 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 4px 0;
+  transition: all 0.3s ease;
+}
+
+.check-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: rgba(245, 101, 101, 0.2);
+  color: var(--error);
+  font-weight: bold;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Checklist item when criterion is met */
+.checklist-item.valid .check-icon {
+  background: rgba(72, 187, 120, 0.2);
+  color: var(--success);
+}
+
+.checklist-item.valid {
+  color: var(--success);
+}
+
+.check-label {
+  flex: 1;
+}
+
+/* Confirm password field styling */
+#confirmPassword {
+  margin-top: 0;
 }
 
 /* --- Dark Theme --- */
