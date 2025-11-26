@@ -229,10 +229,7 @@ function validateEmail() {
   return true;
 }
 
-function validatePassword() {
-  const password = passwordInput.value;
-  const hasUppercase = /[A-Z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
+
 
   if (password === "") {
     showError(passwordInput, passwordError, "Password cannot be empty");
