@@ -16,20 +16,8 @@ const themeToggleBtn = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 
 // Password toggle elements
-const passwordToggleBtn = document.getElementById("passwordToggle");
-
-// Password checklist elements
-const checklistItems = {
-  length: document.getElementById("check-length"),
-  uppercase: document.getElementById("check-uppercase"),
-  lowercase: document.getElementById("check-lowercase"),
-  number: document.getElementById("check-number"),
-  special: document.getElementById("check-special")
-};
-
-// Password validation regex (strict policy)
-// Requires: 12+ chars, lowercase, uppercase, digit, and special char
-const passwordRegex = /^(?=.{12,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).*$/;
+const passwordToggle = document.getElementById("passwordToggle");
+let passwordVisible = false; // Track visibility state
 
 // === Validation Functions ===
 function validateName() {
@@ -53,65 +41,36 @@ function validateEmail() {
   return true;
 }
 
-// Check individual password criteria
-function checkPasswordCriteria(password) {
-  return {
-    length: password.length >= 12,
-    uppercase: /[A-Z]/.test(password),
-    lowercase: /[a-z]/.test(password),
-    number: /\d/.test(password),
-    special: /[!@#$%^&()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
-  };
-}
-
-// Update the checklist display in real-time
-function updateChecklist(password) {
-  const criteria = checkPasswordCriteria(password);
-
-  // Update each checklist item
-  const items = [
-    { key: 'length', element: checklistItems.length },
-    { key: 'uppercase', element: checklistItems.uppercase },
-    { key: 'lowercase', element: checklistItems.lowercase },
-    { key: 'number', element: checklistItems.number },
-    { key: 'special', element: checklistItems.special }
-  ];
-
-  items.forEach(item => {
-    if (criteria[item.key]) {
-      item.element.classList.add('valid');
-      item.element.querySelector('.check-icon').textContent = '✓';
-    } else {
-      item.element.classList.remove('valid');
-      item.element.querySelector('.check-icon').textContent = '✗';
-    }
-  });
-
-  return criteria;
-}
-
-// Validate password against strict policy
 function validatePassword() {
   const password = passwordInput.value;
-  const criteria = updateChecklist(password);
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
 
-  // Check if password matches full regex pattern
-  if (!password.match(passwordRegex)) {
-    if (password === "") {
-      passwordError.textContent = "Password is required";
-    } else {
-      // Show which specific requirements are missing
-      const missing = [];
-      if (!criteria.length) missing.push("12+ characters");
-      if (!criteria.uppercase) missing.push("uppercase letter");
-      if (!criteria.lowercase) missing.push("lowercase letter");
-      if (!criteria.number) missing.push("number");
-      if (!criteria.special) missing.push("special character");
-      
-      passwordError.textContent = missing.length > 0 
-        ? `Missing: ${missing.join(", ")}`
-        : "Password does not meet requirements";
-    }
+  if (password === "") {
+    passwordError.textContent = "Password cannot be empty";
+    return false;
+  }
+  if (password.length < 12) {
+    passwordError.textContent = "Password must be at least 12 characters";
+    return false;
+  }
+  if (!hasUppercase) {
+    passwordError.textContent = "Must contain an uppercase letter (A-Z)";
+    return false;
+  }
+  if (!hasLowercase) {
+    passwordError.textContent = "Must contain a lowercase letter (a-z)";
+    return false;
+  }
+  if (!hasNumber) {
+    passwordError.textContent = "Must contain a number (0-9)";
+    return false;
+  }
+  if (!hasSpecial) {
+    passwordError.textContent =
+      "Must contain a special character (!@#$%^&*()_+-=[]{};':\"\\|,.<>/?)";
     return false;
   }
 
@@ -119,23 +78,16 @@ function validatePassword() {
   return true;
 }
 
-// === Event Handling ===
-nameInput.addEventListener("input", validateName);        // real-time feedback
-emailInput.addEventListener("blur", validateEmail);       // on losing focus
-passwordInput.addEventListener("input", validatePassword); // real-time password validation
+// === Event Handling (At least two event types used) ===
+nameInput.addEventListener("input", validateName); // real-time feedback
+emailInput.addEventListener("blur", validateEmail); // on losing focus
+passwordInput.addEventListener("input", validatePassword);
 
-// Password toggle button (click to toggle visibility)
-passwordToggleBtn.addEventListener("click", function (e) {
-  e.preventDefault();
-  const isPassword = passwordInput.type === "password";
-  passwordInput.type = isPassword ? "text" : "password";
-  
-  // Update icon
-  const icon = passwordToggleBtn.querySelector('.toggle-icon');
-  icon.textContent = isPassword ? "🙈" : "👁️";
-  
-  // Update aria-pressed
-  passwordToggleBtn.setAttribute("aria-pressed", isPassword);
+// Password reveal toggle (click to toggle)
+passwordToggle.addEventListener("click", function () {
+  passwordVisible = !passwordVisible;
+  passwordInput.type = passwordVisible ? "text" : "password";
+  passwordToggle.textContent = passwordVisible ? "🙈" : "👁️";
 });
 
 // === Form Submission ===
@@ -181,7 +133,9 @@ if (savedTheme) {
   applyTheme(savedTheme);
 } else {
   // optional: detect system preference
-  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const prefersDark =
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
   applyTheme(prefersDark ? "dark" : "light");
 }
 
@@ -200,54 +154,3 @@ themeToggleBtn.addEventListener("keydown", function (e) {
     themeToggleBtn.click();
   }
 });
-// Show error with animation
-function showError(inputElement, errorElement, message) {
-  errorElement.textContent = message;
-  errorElement.classList.add("show");
-  setTimeout(() => {
-    errorElement.classList.remove("show");
-  }, 300); // Remove shake after animation
-}
-
-// Updated validation functions
-function validateName() {
-  if (nameInput.value.trim() === "") {
-    showError(nameInput, nameError, "Name cannot be empty");
-    return false;
-  }
-  nameError.textContent = "";
-  return true;
-}
-
-function validateEmail() {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailInput.value.match(emailPattern)) {
-    showError(emailInput, emailError, "Enter a valid email address");
-    return false;
-  }
-  emailError.textContent = "";
-  return true;
-}
-
-
-
-  if (password === "") {
-    showError(passwordInput, passwordError, "Password cannot be empty");
-    return false;
-  }
-  if (!hasUppercase) {
-    showError(passwordInput, passwordError, "Must contain an uppercase letter");
-    return false;
-  }
-  if (!hasNumber) {
-    showError(passwordInput, passwordError, "Must contain a number");
-    return false;
-  }
-
-  passwordError.textContent = "";
-  return true;
-}
-
-// NOTE: removed stray global check (it caused ReferenceError because
-// isNameValid/isEmailValid/isPasswordValid were local to the submit handler).
-// Success message is now handled inside the submit listener above.

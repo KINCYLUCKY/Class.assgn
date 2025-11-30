@@ -1,6 +1,6 @@
 /* === General Page Styling === */
-:root{
-  --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+:root {
+  --bg: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   --card: #ffffff;
   --text: #253831;
   --muted: #718096;
@@ -14,7 +14,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: var(--bg);
   color: var(--text);
   display: flex;
@@ -39,7 +39,7 @@ body {
 }
 
 .container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -51,8 +51,13 @@ body {
 }
 
 @keyframes gradientMove {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 h2 {
@@ -106,8 +111,13 @@ h2 {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 #themeIcon:active {
@@ -115,8 +125,12 @@ h2 {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(180deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
 }
 .theme-toggle:hover {
   transform: scale(1.1) rotate(5deg);
@@ -150,9 +164,15 @@ h2 {
   animation: slideInUp 0.6s ease both;
 }
 
-.input-group:nth-child(2) { animation-delay: 0.1s; }
-.input-group:nth-child(3) { animation-delay: 0.2s; }
-.input-group:nth-child(4) { animation-delay: 0.3s; }
+.input-group:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.input-group:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.input-group:nth-child(4) {
+  animation-delay: 0.3s;
+}
 
 @keyframes slideInUp {
   from {
@@ -187,51 +207,59 @@ input {
 
 /* Password container for toggle */
 .password-container {
-  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background: rgba(102, 126, 234, 0.02);
+  color: inherit;
+  font-family: inherit;
+}
+
+.password-container:hover {
+  border-color: var(--input-focus);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.password-container:focus-within {
+  border-color: var(--input-focus);
+  outline: none;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
 }
 
 .password-container input {
-  padding-right: 45px; /* Space for the toggle button inside */
-}
-
-/* Password toggle button */
-.password-toggle-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
+  flex: 1;
   border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  color: inherit;
+  font-family: inherit;
+  padding-right: 10px; /* Small space before toggle */
+}
+
+.password-container input:focus {
+  outline: none;
+}
+
+.password-toggle {
   cursor: pointer;
-  font-size: 18px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  height: 36px;
-  width: 36px;
-}
-
-.password-toggle-btn:hover {
-  background: rgba(102, 126, 234, 0.15);
-}
-
-.password-toggle-btn:focus {
-  outline: 2px solid var(--input-focus);
-  outline-offset: -2px;
-}
-
-.toggle-icon {
-  display: inline-block;
-  transition: transform 0.3s ease;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  user-select: none;
   line-height: 1;
+  flex-shrink: 0;
 }
 
-.password-toggle-btn:active .toggle-icon {
-  transform: scale(1.2);
+.password-toggle:hover {
+  opacity: 1;
 }
 
 input:hover {
@@ -247,6 +275,14 @@ input:focus {
   transform: translateY(-2px);
 }
 
+/* Help Messages */
+.help {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
 /* Error Messages */
 .error {
   color: var(--error);
@@ -260,7 +296,7 @@ input:focus {
 }
 
 .error:not(:empty)::before {
-  content: '⚠';
+  content: "⚠";
   font-size: 14px;
 }
 
@@ -284,7 +320,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -313,7 +349,9 @@ button[type="submit"]:active {
 }
 
 /* Success Message */
-.hidden { display: none; }
+.hidden {
+  display: none;
+}
 
 #successMessage {
   text-align: center;
@@ -351,7 +389,7 @@ button[type="submit"]:active {
 }
 
 #successMessage::before {
-  content: '✓';
+  content: "✓";
   display: block;
   width: 60px;
   height: 60px;
@@ -376,75 +414,9 @@ button[type="submit"]:active {
   }
 }
 
-/* Help text */
-.help-text {
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 4px;
-  margin-bottom: 8px;
-  display: block;
-  font-weight: 500;
-}
-
-/* Password checklist */
-.checklist {
-  background: rgba(102, 126, 234, 0.05);
-  border: 1px solid var(--input-border);
-  border-radius: 10px;
-  padding: 12px;
-  margin: 8px 0 12px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.checklist-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: var(--muted);
-  padding: 4px 0;
-  transition: all 0.3s ease;
-}
-
-.check-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  background: rgba(245, 101, 101, 0.2);
-  color: var(--error);
-  font-weight: bold;
-  font-size: 12px;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-/* Checklist item when criterion is met */
-.checklist-item.valid .check-icon {
-  background: rgba(72, 187, 120, 0.2);
-  color: var(--success);
-}
-
-.checklist-item.valid {
-  color: var(--success);
-}
-
-.check-label {
-  flex: 1;
-}
-
-/* Confirm password field styling */
-#confirmPassword {
-  margin-top: 0;
-}
-
 /* --- Dark Theme --- */
 body.dark {
-  --bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --bg: linear-gradient(135deg, #434343 0%, #000000 100%);
   --card: #1f2937;
   --text: #f9fafb;
   --muted: #9ca3af;
@@ -469,6 +441,18 @@ body.dark input:hover {
 }
 
 body.dark input:focus {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.dark .password-container {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .password-container:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.dark .password-container:focus-within {
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -501,9 +485,23 @@ body.dark input:focus {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-  20%, 40%, 60%, 80% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
 }
 
 @keyframes fadeIn {
@@ -543,7 +541,7 @@ button[type="submit"].loading {
 }
 
 button[type="submit"].loading::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 16px;
   height: 16px;
@@ -557,7 +555,73 @@ button[type="submit"].loading::after {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Background Shapes */
+.background-shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.background-shapes::before {
+  content: "✨";
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  font-size: 2rem;
+  opacity: 0.6;
+  animation: floatAround1 15s infinite linear;
+}
+
+.background-shapes::after {
+  content: "🌟";
+  position: absolute;
+  top: 70%;
+  right: 15%;
+  font-size: 1.5rem;
+  opacity: 0.5;
+  animation: floatAround2 20s infinite linear reverse;
+}
+
+@keyframes floatAround1 {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(100px, 50px) rotate(90deg);
+  }
+  50% {
+    transform: translate(50px, 100px) rotate(180deg);
+  }
+  75% {
+    transform: translate(-50px, 50px) rotate(270deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+@keyframes floatAround2 {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(-80px, -60px) rotate(120deg);
+  }
+  66% {
+    transform: translate(60px, -40px) rotate(240deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
 }
 
 /* Responsive improvements */
@@ -565,16 +629,16 @@ button[type="submit"].loading::after {
   .container {
     padding: 30px 25px;
   }
-  
+
   h2 {
     font-size: 24px;
   }
-  
+
   input {
     padding: 12px 14px;
     font-size: 14px;
   }
-  
+
   button[type="submit"] {
     padding: 14px;
   }
